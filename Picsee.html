@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <title>Picsee短網址</title>
+  <link
+    rel="stylesheet"
+    href="./practicestyle.css"
+  >
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <a
+        href="#"
+        class="logo"
+      >
+        Picsee
+      </a>
+
+
+    </header>
+    <section class="main">
+      <div>
+        <label for="">輸入您的網址</label>
+        <input
+          type="text"
+          @keyup.enter="submitHandler()"
+          v-model="url"
+        >
+
+      </div>
+      <div>
+        您的短網址是
+        <span v-if="!edit">
+          {{picseeUrl}}
+        </span>
+        <span v-else>
+          <input
+            type="text"
+            @keyup.enter="editHandler"
+            v-model="editContent"
+          >
+        </span>
+        <br>
+        <label for="">我要修改</label>
+        <button @click="edit = true">按此修改</button>
+      </div>
+      <div>
+        歷史短網址 {{history}}
+      </div>
+    </section>
+  </div>
+
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js'></script>
+  <script>
+    const LS = {
+      get(key) {
+        return localStorage.getItem(key) || '目前無短網址'
+      },
+      save(key, value) {
+        localStorage.setItem(key, value)
+      }
+    }
+    const vm = new Vue({
+      el: '#app',
+      data: {
+        url: '',
+        picseeUrl: '',
+        encodeId: '',
+        history: '',
+        edit: false,
+        ACCESS_TOKEN: '20f07f91f3303b2f66ab6f61698d977d69b83d64'
+      },
+      methods: {
+        submitHandler() {
+          const URL = this.url
+          const APIURL =
+            'https://api.pics.ee/v1/links?access_token=20f07f91f3303b2f66ab6f61698d977d69b83d64&caller=client-simple&lang=zh-tw'
+          const APIDATA = {
+            "url": URL
+          }
+          axios.post(APIURL, APIDATA)
+            .then((res) => {
+              let picseeUrl = res.data.data.picseeUrl
+              // console.log(picseeUrl.slice(15))
+              let encodeId = picseeUrl.slice(15)
+              this.picseeUrl = picseeUrl
+              this.encodeId = encodeId
+              LS.save('picseeUrl', picseeUrl)
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+        },
+        editHandler() {
+          let newEncodeId = this.editContent.slice(15)
+          let data = {
+            "value": newEncodeId
+          }
+
+          const EDITAPI =
+            `https://api.pics.ee/v1/links/${this.encodeId}/encodeId/?access_token=${this.ACCESS_TOKEN}&caller=client-simple&lang=zh-tw`
+          axios.post(EDITAPI, data).then((res) => {
+              let picseeUrl = res.data.data.picseeUrl
+              // console.log(picseeUrl.slice(15))
+              let encodeId = picseeUrl.slice(15)
+              this.picseeUrl = picseeUrl
+              this.encodeId = encodeId
+              LS.save('picseeUrl', picseeUrl)
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+
+          this.edit = false
+        }
+      },
+      mounted() {
+        this.history = LS.get('picseeUrl')
+      },
+      computed: {
+        editContent: {
+          get() {
+            return this.picseeUrl
+          },
+          set(val) {
+            this.picseeUrl = val
+          }
+        }
+
+
+      }
+
+    })
+  </script>
+</body>
+
+</html>
