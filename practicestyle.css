@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500&display=swap');
+
+body{
+  
+}
+
+*{
+  font-family: 'Noto Sans TC', sans-serif;
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  
+}
+
+header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 10%;
+  position: relative;
+}
+
+header .logo{
+  text-transform: uppercase;
+  color: #000;
+  cursor: pointer;
+  margin-right: auto;
+  order: 3;
+}
+
+a{
+  text-decoration: none;
+}
+
+header ul{
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 10px;
+}
+
+header ul li{
+  list-style: none;
+  padding: 15px;
+}
+
+header ul li a{
+  transition: all 0.3s ease ;
+}
+
+header ul li a:hover{
+  color: #0088a9;
+}
+
+.first-ul{
+  float: left;
+}
+
+.second-ul{
+  justify-self: right;
+}
